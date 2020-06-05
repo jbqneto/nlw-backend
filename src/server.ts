@@ -1,8 +1,21 @@
 import path from 'path';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import router from './routes';
 
 const app = express();
+
+app.use((req: Request, res: Response, next: Function) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+    return res.status(200).json({});
+  }
+
+  next();
+
+});
 
 app.use(express.json());
 app.use(router);

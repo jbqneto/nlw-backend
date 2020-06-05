@@ -3,6 +3,25 @@ import knex from '../database/connection';
 
 class PointsController {
 
+  async index(request: Request, response: Response) {
+    const { city, uf, items } = request.query;
+
+    const parsedItems = String(items)
+      .split(',')
+      .map(item => Number(item.trim()));
+
+    const points = await knex('points')
+      .join('point_items', 'points.id', '=', 'point_items.point_id')
+      .whereIn('point_items.item_id', parsedItems)
+      .where('city', String(city))
+      .where('uf', String(uf))
+      .distinct()
+      .select('points.*');
+
+    return response.json(points);
+
+  }
+
   async show(request: Request, response: Response) {
     const { id } = request.params;
     try {
@@ -11,7 +30,11 @@ class PointsController {
       if (!point)
         return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
 
-      return response.json(point);
+      const items = await knex('items')
+        .join('point_items', 'items.id', '=', 'point_items.item_id')
+        .where('point_items.point_id', id).select('title');
+
+      return response.json({ point, items });
 
     } catch (error) {
       return response.status(error.status || 400).json({ error: error.message });
