@@ -42,6 +42,26 @@ class PointsController {
 
   }
 
+  async edit(request: Request, response: Response) {
+    const { id } = request.params;
+    const { image } = request.body;
+
+    try {
+      const point = await knex('points').where('id', id).first();
+
+        if (!point)
+          return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
+
+      await knex('points').where('id','=',id).update('image', image);
+      
+      return response.status(204).send();
+
+    } catch (error) {
+      return response.status(error.status || 500).json({error: error.message});
+    }
+
+  }
+
   async create(request: Request, response: Response) {
     const { name, email, whatsapp, latitude, longitude, city, uf, items } = request.body;
 
