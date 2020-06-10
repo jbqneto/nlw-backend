@@ -30,11 +30,13 @@ class PointsController {
       if (!point)
         return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
 
+      const serializedPoint = { ...point, image: `http://192.168.25.218:3000/uploads/${point.image}` }
+
       const items = await knex('items')
         .join('point_items', 'items.id', '=', 'point_items.item_id')
-        .where('point_items.point_id', id).select('title');
+        .where('point_items.point_id', id).select('items.id', 'items.title');
 
-      return response.json({ point, items });
+      return response.json({ point: serializedPoint, items });
 
     } catch (error) {
       return response.status(error.status || 400).json({ error: error.message });
@@ -49,15 +51,15 @@ class PointsController {
     try {
       const point = await knex('points').where('id', id).first();
 
-        if (!point)
-          return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
+      if (!point)
+        return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
 
-      await knex('points').where('id','=',id).update('image', image);
-      
+      await knex('points').where('id', '=', id).update('image', image);
+
       return response.status(204).send();
 
     } catch (error) {
-      return response.status(error.status || 500).json({error: error.message});
+      return response.status(error.status || 500).json({ error: error.message });
     }
 
   }
@@ -71,7 +73,7 @@ class PointsController {
       const point = {
         name,
         email,
-        image: '',
+        image: request.file.filename,
         whatsapp,
         latitude,
         longitude,
@@ -83,12 +85,15 @@ class PointsController {
 
       const point_id = insertedPointIds[0];
 
-      const pointItems = items.map((item_id: number) => {
-        return {
-          item_id,
-          point_id
-        }
-      });
+      const pointItems = items
+        .split(',')
+        .map((item: string) => parseInt(item.trim()))
+        .map((item_id: number) => {
+          return {
+            item_id,
+            point_id
+          }
+        });
 
       await transaction('point_items').insert(pointItems);
 
