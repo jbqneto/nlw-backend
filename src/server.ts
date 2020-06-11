@@ -22,4 +22,4 @@ app.use(router);
 
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 
-app.listen(3000);
+const server = app.listen(3000, 'localhost');

@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import knex from '../database/connection';
+import util from '../config/util';
+
+const ip = util.Network.getIp();
 
 class PointsController {
 
@@ -18,7 +21,15 @@ class PointsController {
       .distinct()
       .select('points.*');
 
-    return response.json(points);
+    const serializedPoints = points.map(point => {
+      return {
+        id: point.id,
+        title: point.title,
+        image: `http://${ip}:3000/uploads/${point.image}`
+      };
+    });
+
+    return response.json(serializedPoints);
 
   }
 
@@ -30,7 +41,7 @@ class PointsController {
       if (!point)
         return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
 
-      const serializedPoint = { ...point, image: `http://192.168.25.218:3000/uploads/${point.image}` }
+      const serializedPoint = { ...point, image: `http://${ip}:3000/uploads/${point.image}` }
 
       const items = await knex('items')
         .join('point_items', 'items.id', '=', 'point_items.item_id')
@@ -106,6 +117,25 @@ class PointsController {
       return response.status(error.status || 500).json(error.message || 'Erro ao gravar ponto');
     }
 
+  }
+
+  async delete(request: Request, response: Response) {
+    const { id } = request.params;
+    const { image } = request.body;
+
+    try {
+      const point = await knex('points').where('id', id).first();
+
+      if (!point)
+        return response.status(404).json({ error: `Ponto não encontrado: ${id}` });
+
+      await knex('points').where('id', '=', id).del();
+
+      return response.status(204).send();
+
+    } catch (error) {
+      return response.status(error.status || 500).json({ error: error.message });
+    }
   }
 }
 

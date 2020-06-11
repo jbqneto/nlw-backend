@@ -16,6 +16,7 @@ routes.get('/items', itemsController.index);
 routes.get('/points', pointsController.index);
 routes.get('/points/:id', pointsController.show);
 routes.put('/points/:id', pointsController.edit);
+routes.delete('/points/:id', pointsController.delete);
 routes.post('/points', upload.single('image'), pointsController.create);
 
 export default routes;
