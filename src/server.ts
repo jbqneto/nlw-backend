@@ -1,6 +1,7 @@
 import path from 'path';
 import express, { Request, Response } from 'express';
 import router from './routes';
+import { errors } from 'celebrate';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use((req: Request, res: Response, next: Function) => {
 
 app.use(express.json());
 app.use(router);
+app.use(errors());
 
 app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')));
 

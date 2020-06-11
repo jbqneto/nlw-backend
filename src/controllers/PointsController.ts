@@ -24,7 +24,9 @@ class PointsController {
     const serializedPoints = points.map(point => {
       return {
         id: point.id,
-        title: point.title,
+        name: point.name,
+        city: point.city,
+        uf: point.uf,
         image: `http://${ip}:3000/uploads/${point.image}`
       };
     });
@@ -84,13 +86,18 @@ class PointsController {
       const point = {
         name,
         email,
-        image: request.file.filename,
         whatsapp,
         latitude,
         longitude,
         city,
         uf
       };
+
+      if (request.file) {
+        point.image = request.file.filename;
+      } else {
+        point.image = '';
+      }
 
       const insertedPointIds = await transaction('points').insert(point);
 
