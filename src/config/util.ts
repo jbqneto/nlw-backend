@@ -27,7 +27,9 @@ export default {
           if (alias >= 1) {
             return;
           } else {
-            if (ifname.toLowerCase().trim() === 'ethernet') {
+            console.log(ifname.toLowerCase(), iface.address);
+            const name = ifname.trim().toLowerCase();
+            if (name === 'ethernet' || name === 'wi-fi') {
               address = iface.address;
             }
           }

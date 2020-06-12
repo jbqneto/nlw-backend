@@ -27,6 +27,8 @@ class PointsController {
         name: point.name,
         city: point.city,
         uf: point.uf,
+        latitude: point.latitude,
+        longitude: point.longitude,
         image: `http://${ip}:3000/uploads/${point.image}`
       };
     });

@@ -27,8 +27,10 @@ routes.post('/points',
       email: Joi.string().required().email(),
       latitude: Joi.number().required(),
       longitude: Joi.number().required(),
+      whatsapp: Joi.string(),
       city: Joi.string().required(),
-      uf: Joi.string().required()
+      uf: Joi.string().required(),
+      items: Joi.string().required()
     })
   }),
   pointsController.create);

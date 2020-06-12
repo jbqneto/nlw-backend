@@ -6,5 +6,7 @@ export async function seed(knex: Knex) {
     { title: 'Pilhas e Baterias', image: 'baterias.svg' },
     { title: 'Papéis e Papelão', image: 'papeis-papelao.svg' },
     { title: 'Óleo de Cozinha', image: 'oleo.svg' },
+    { title: 'Orgânicos', image: 'organicos.svg' },
+    { title: 'Papel e papelão', image: 'papeis-papelao.svg' }
   ]);
 }
