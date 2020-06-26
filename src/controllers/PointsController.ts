@@ -80,7 +80,7 @@ class PointsController {
   }
 
   async create(request: Request, response: Response) {
-    const { name, email, whatsapp, latitude, longitude, city, uf, items } = request.body;
+    const { name, email, whatsapp, latitude, longitude, city, uf, items,image } = request.body;
 
     try {
 
@@ -92,6 +92,7 @@ class PointsController {
         latitude,
         longitude,
         city,
+        image,
         uf
       };
 
